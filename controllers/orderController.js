@@ -48,3 +48,45 @@ exports.getOrder = async(req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
+
+exports.getAllOrders = async(req, res) => {
+    try {
+        const orders = await Order.find().populate('userID', 'email');
+        res.json(orders);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+
+
+// Add this to the bottom of your file
+// orderController.js
+exports.updateOrderStatus = async(req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { newStatus } = req.body;
+
+        const updatedOrder = await Order.findByIdAndUpdate(
+            orderId, { orderStatus: newStatus }, { new: true }
+        );
+
+        if (!updatedOrder) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            order: updatedOrder
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+};
