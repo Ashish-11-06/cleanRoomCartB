@@ -196,3 +196,27 @@ exports.searchProductsByName = async(req, res) => {
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
+
+
+
+// ✅ Get Product ID by Product Code
+exports.getProductIdByCode = async(req, res) => {
+    try {
+        const { code } = req.params;
+
+        if (!code) {
+            return res.status(400).json({ success: false, message: "Product code is required" });
+        }
+
+        const product = await Product.findOne({ productCode: code }).select("_id");
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Product not found" });
+        }
+
+        res.status(200).json({ success: true, productId: product._id, message: "Product ID fetched successfully" });
+    } catch (error) {
+        console.error("Error fetching product by code:", error);
+        res.status(500).json({ success: false, message: "Server error", error: error.message });
+    }
+};

@@ -4,7 +4,8 @@ const {
     addInterestedUser,
     getInterestedUsers,
     getTopInterestedProducts,
-    getTop7InterestedProducts
+    getTop7InterestedProducts,
+    deleteInterestedUsersByProductId,
 } = require("../controllers/interestedUserController");
 
 // 📌 Route to add interested user
@@ -18,5 +19,9 @@ router.get("/top-products", getTopInterestedProducts);
 
 // 📌 Route to get top 7 most interested products
 router.get("/top-7-products", getTop7InterestedProducts);
+
+// 📌 Route to delete interested users by product ID
+router.delete("/delete-by-product/:productId", deleteInterestedUsersByProductId);
+
 
 module.exports = router;

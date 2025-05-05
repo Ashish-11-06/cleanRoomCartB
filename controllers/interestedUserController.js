@@ -70,3 +70,25 @@ exports.getTop7InterestedProducts = async(req, res) => {
         res.status(500).json({ message: "Server error", error });
     }
 };
+
+
+// 📌 Delete Interested Users by Product ID
+exports.deleteInterestedUsersByProductId = async(req, res) => {
+    try {
+        const { productId } = req.params;
+
+        if (!productId) {
+            return res.status(400).json({ message: "Product ID is required" });
+        }
+
+        const result = await InterestedUser.deleteMany({ productId });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: "No interested users found for this product" });
+        }
+
+        res.status(200).json({ message: "Interested users deleted successfully", deletedCount: result.deletedCount });
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+    }
+};

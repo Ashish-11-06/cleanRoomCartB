@@ -9,7 +9,8 @@ const {
     deleteProduct,
     updateProduct,
     getProductsForTable,
-    searchProductsByName
+    searchProductsByName,
+    getProductIdByCode
 } = require("../controllers/productController");
 
 const router = express.Router();
@@ -51,6 +52,8 @@ router.put("/update/:id", updateProduct);
 router.get("/search", getProductsForTable);
 // routes.js
 router.get("/searchbar", searchProductsByName);
+router.get("/get-id-by-code/:code", getProductIdByCode);
+
 
 
 
