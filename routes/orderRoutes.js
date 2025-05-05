@@ -8,6 +8,8 @@ router.get('/all-orders', orderController.getAllOrders);
 // Change the route path to match the frontend request
 router.put('/status/:orderId', orderController.updateOrderStatus);
 
+router.get('/user-orders/:userId', orderController.getUserOrders);
+
 
 
 

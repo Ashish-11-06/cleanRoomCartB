@@ -90,3 +90,26 @@ exports.updateOrderStatus = async(req, res) => {
         });
     }
 };
+
+
+exports.getUserOrders = async(req, res) => {
+    try {
+        console.log('[Backend] Fetching orders for user:', req.params.userId);
+        const orders = await Order.find({ userID: req.params.userId })
+            .populate('items.productID', 'productCode name images')
+            .sort({ orderDate: -1 })
+            .lean();
+
+        console.log(`[Backend] Found ${orders.length} orders for user ${req.params.userId}`);
+        res.json({
+            success: true,
+            data: orders
+        });
+    } catch (err) {
+        console.error('[Backend] Error:', err.message);
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+    }
+};

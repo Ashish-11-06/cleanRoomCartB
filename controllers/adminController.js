@@ -112,12 +112,7 @@ const getInterestedUsers = async(req, res) => {
     }
 }
 
-module.exports = {
-    loginAdmin,
-    registerAdmin,
-    getInterestedUsers,
-    addInterestedUser
-};
+
 
 
 
@@ -157,4 +152,43 @@ exports.loginConsumer = async(req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
+};
+
+
+const getAllAdmins = async(req, res) => {
+    try {
+        const admins = await Admin.find().select('-password'); // exclude password
+        res.status(200).json({ success: true, data: admins });
+    } catch (error) {
+        console.error('Error fetching admins:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
+
+const deleteAdmin = async(req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedAdmin = await Admin.findByIdAndDelete(id);
+
+        if (!deletedAdmin) {
+            return res.status(404).json({ success: false, message: 'Admin not found' });
+        }
+
+        res.status(200).json({ success: true, message: 'Admin deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting admin:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
+module.exports = {
+    loginAdmin,
+    registerAdmin,
+    getInterestedUsers,
+    addInterestedUser,
+    getAllAdmins,
+    deleteAdmin,
 };
