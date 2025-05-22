@@ -5,7 +5,6 @@ const axios = require("axios");
 
 // Add a new contact request
 exports.addContact = async(req, res) => {
-    // console.log('hii');
     try {
         const { fullName, phone, email, orderNumber, companyName, comments } = req.body;
 
@@ -20,41 +19,16 @@ exports.addContact = async(req, res) => {
 
         await contact.save();
 
-        // SMTP transporter setup
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com", // Replace with your SMTP server
-            port: 587, // or 465 if using SSL
-            secure: false, // true for 465, false for other ports
-            auth: {
-                user: "kiran899964@gmail.com", // SMTP email
-                pass: "djjykbogdxqqnpyx" // SMTP password
-            }
+        res.status(201).json({
+            message: "",
+            contact,
         });
-
-        // Email options
-        const mailOptions = {
-            // from: "gayatrirajguru2002@gmail.com", // Sender email
-            from: email,
-            // to: "kiran899964@gmail.com", // Recipient email
-            to: "kiran899964@gmail.com",
-            subject: "New Contact Request",
-            text: `You have a new contact request from ${fullName}.
-                   Email: ${email}
-                   Phone: ${phone}
-                   Company Name: ${companyName}
-                   Comments: ${comments}`
-        };
-
-        // Send email
-        await transporter.sendMail(mailOptions);
-
-        console.log("Email sent successfully");
-        res.status(201).json({ message: "Contact request submitted successfully we will reach you soon !!", contact });
     } catch (error) {
         console.error("Error:", error);
         res.status(500).json({ message: "Server error", error });
     }
 };
+
 
 
 // Get all contact requests

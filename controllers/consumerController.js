@@ -214,8 +214,9 @@ exports.forgotPassword = async(req, res) => {
             }
         });
 
+
         const mailOptions = {
-            from: 'kiran899964@gmail.com',
+            from: 'Cleanroomcart',
             to: user.email,
             subject: 'Password Reset',
             html: `
