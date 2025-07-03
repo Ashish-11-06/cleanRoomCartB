@@ -18,6 +18,8 @@ const ConsumerSchema = new mongoose.Schema({
     },
     password: { type: String, required: true },
     phoneNumber: { type: String, trim: true },
+    company: { type: String, trim: true }, // <-- Added
+    designation: { type: String, trim: true }, // <-- Added
     addressLine1: { type: String, trim: true },
     addressLine2: { type: String, trim: true },
     city: { type: String, trim: true },

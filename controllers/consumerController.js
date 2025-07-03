@@ -16,6 +16,8 @@ exports.registerConsumer = async(req, res) => {
             password,
             confirmPassword,
             phoneNumber,
+            company, // <-- Added
+            designation, // <-- Added
             addressLine1,
             addressLine2,
             city,
@@ -50,6 +52,8 @@ exports.registerConsumer = async(req, res) => {
             email,
             password: hashedPassword,
             phoneNumber,
+            company, // <-- Added
+            designation, // <-- Added
             addressLine1,
             addressLine2,
             city,
@@ -75,7 +79,9 @@ exports.registerConsumer = async(req, res) => {
                 firstName: newConsumer.firstName,
                 lastName: newConsumer.lastName,
                 email: newConsumer.email,
-                phoneNumber: newConsumer.phoneNumber
+                phoneNumber: newConsumer.phoneNumber,
+                company: newConsumer.company, // <-- Added
+                designation: newConsumer.designation // <-- Added
             }
         });
 
@@ -84,6 +90,7 @@ exports.registerConsumer = async(req, res) => {
         return res.status(500).json({ message: "Server error", error: error.message });
     }
 };
+
 
 // Login Consumer
 exports.loginConsumer = async(req, res) => {

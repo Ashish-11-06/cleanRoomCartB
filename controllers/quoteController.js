@@ -1,12 +1,21 @@
 const Quote = require('../models/Quote');
 const nodemailer = require("nodemailer");
 require("dotenv").config(); // Load environment variables
+const path = require('path');
+
 
 // Add a new quote request
 exports.addQuote = async(req, res) => {
     try {
         const { fullName, email, phone, companyName, serviceInterested, message } = req.body;
+        const attachment = req.file ? req.file.filename : null;
 
+        // Validate required fields
+        if (!fullName || !email || !serviceInterested || !message) {
+            return res.status(400).json({ message: "Missing required fields." });
+        }
+
+        // Save to database
         const quote = new Quote({
             fullName,
             email,
@@ -14,42 +23,56 @@ exports.addQuote = async(req, res) => {
             companyName,
             serviceInterested,
             message,
+            attachment
         });
 
         await quote.save();
 
-        // SMTP transporter setup
+        // Configure Nodemailer
         const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com", // Replace with your SMTP server
-            port: 587, // or 465 if using SSL
-            secure: false, // true for 465, false for other ports
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false,
             auth: {
-                user: "kiran899964@gmail.com", // SMTP email
-                pass: "djjykbogdxqqnpyx" // SMTP password
+                user: "kiran899964@gmail.com",
+                pass: "djjykbogdxqqnpyx"
             }
         });
 
-        // Email options
+        // Prepare email options
         const mailOptions = {
-            from: email,
+            from: `"Quote Request" <${email}>`,
             to: "kiran899964@gmail.com",
             subject: "New Quote Request",
             text: `You have a new quote request from ${fullName}.
-                   Email: ${email}
-                   Phone: ${phone}
-                   Company Name: ${companyName}
-                   Service Interested: ${serviceInterested}
-                   Message: ${message}`
+Email: ${email}
+Phone: ${phone}
+Company Name: ${companyName}
+Service Interested: ${serviceInterested}
+Message: ${message}`,
+            attachments: attachment ? [{
+                filename: req.file.originalname,
+                path: path.resolve(__dirname, "..", "uploads", attachment),
+                contentType: "application/pdf"
+            }] : []
         };
 
         // Send email
         await transporter.sendMail(mailOptions);
 
-        console.log("Email sent successfully");
-        res.status(201).json({ message: "✅ Quote request submitted successfully. We will get back to you soon!", quote });
+        res.status(201).json({
+            message: "✅ Quote request submitted successfully. We will get back to you soon!",
+            quote
+        });
     } catch (error) {
-        console.error("Error:", error);
-        res.status(500).json({ message: "Server error", error });
+        // Log the error for debugging
+        console.error("Error in addQuote:", error);
+
+        // Send a clear error message to the frontend
+        res.status(500).json({
+            message: "Server error",
+            error: error.message || error
+        });
     }
 };
 

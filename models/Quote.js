@@ -7,6 +7,7 @@ const quoteSchema = new mongoose.Schema({
     companyName: { type: String },
     serviceInterested: { type: String },
     message: { type: String, required: true },
+    attachment: { type: String }, // filename of uploaded PDF
     createdAt: { type: Date, default: Date.now }
 });
 

@@ -1,31 +1,56 @@
 const multer = require('multer');
 const path = require('path');
 
-// Set up storage engine for multer
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'uploads/'); // Save files in the 'uploads' folder
+        cb(null, 'uploads/');
     },
     filename: function(req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Append timestamp to filename
+        cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 
-// Initialize upload
-const upload = multer({
-    storage: storage,
-    limits: { fileSize: 1024 * 1024 * 5 }, // Limit file size to 5MB
-    fileFilter: function(req, file, cb) {
-        const filetypes = /jpeg|jpg|png|gif/;
-        const mimetype = filetypes.test(file.mimetype);
-        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+// File filter factory for different file types
+function fileFilterFactory(allowedTypes) {
+    return function(req, file, cb) {
+        const ext = path.extname(file.originalname).toLowerCase();
+        const mimetypeAllowed = allowedTypes.some(type => file.mimetype === type.mimetype);
+        const extAllowed = allowedTypes.some(type => ext === type.ext);
 
-        if (mimetype && extname) {
-            return cb(null, true);
+        if (mimetypeAllowed && extAllowed) {
+            cb(null, true);
         } else {
-            cb(new Error('Only images (jpeg, jpg, png, gif) are allowed!'));
+            cb(new Error(`Only ${allowedTypes.map(t => t.label).join(', ')} files are allowed!`));
         }
     }
-}).single('image'); // 'image' is the field name for the file
+}
 
-module.exports = upload;
+// Allowed types
+const imageTypes = [
+    { mimetype: 'image/jpeg', ext: '.jpg', label: 'JPEG' },
+    { mimetype: 'image/jpeg', ext: '.jpeg', label: 'JPEG' },
+    { mimetype: 'image/png', ext: '.png', label: 'PNG' },
+    { mimetype: 'image/gif', ext: '.gif', label: 'GIF' }
+];
+
+const pdfTypes = [
+    { mimetype: 'application/pdf', ext: '.pdf', label: 'PDF' }
+];
+
+// Export both uploaders
+const uploadImage = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: fileFilterFactory(imageTypes)
+});
+
+const uploadPDF = multer({
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 },
+    fileFilter: fileFilterFactory(pdfTypes)
+});
+
+module.exports = {
+    uploadImage, // .single('image')
+    uploadPDF // .single('attachment')
+};
