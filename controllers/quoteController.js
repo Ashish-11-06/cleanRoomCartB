@@ -34,15 +34,15 @@ exports.addQuote = async(req, res) => {
             port: 587,
             secure: false,
             auth: {
-                user: "kiran899964@gmail.com",
-                pass: "djjykbogdxqqnpyx"
+                user: "001iipt@gmail.com",
+                pass: "uxrwvbrfrlwztctj"
             }
         });
 
         // Prepare email options
         const mailOptions = {
             from: `"Quote Request" <${email}>`,
-            to: "kiran899964@gmail.com",
+            to: "info@cleanroomcart.in",
             subject: "New Quote Request",
             text: `You have a new quote request from ${fullName}.
 Email: ${email}
